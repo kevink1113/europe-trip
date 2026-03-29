@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아버지와 함께하는 유럽 8박 9일 — 총망라 가이드</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --navy: #1a1f3a;
+  --blue: #2d5faa;
+  --sky: #4a90d9;
+  --gold: #d4a853;
+  --warm: #f5ebe0;
+  --cream: #faf8f5;
+  --dark: #2c2c2c;
+  --gray: #6b7280;
+  --muc: #3b82f6;
+  --sal: #10b981;
+  --hal: #f59e0b;
+  --fra: #ef4444;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  background: linear-gradient(135deg, #1a1f3a 0%, #2d4a7a 50%, #3a6b9f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Hallstatt_300.jpg') center/cover;
+  opacity: 0.22;
+}
+.hero-content { position: relative; z-index: 2; padding: 2rem; }
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.hero .subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-weight: 300;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+.hero .date-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+/* ── ROUTE FLOW ── */
+.route-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.route-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.route-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.route-label { font-size: 0.75rem; opacity: 0.8; font-weight: 400; }
+.route-days { font-size: 0.65rem; opacity: 0.6; }
+.route-arrow {
+  width: 40px;
+  height: 2px;
+  background: rgba(255,255,255,0.4);
+  position: relative;
+  margin: 0 6px;
+  margin-bottom: 20px;
+}
+.route-arrow::after {
+  content: '›';
+  position: absolute;
+  right: -4px;
+  top: -9px;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+}
+
+/* ── SCROLL CTA ── */
+.scroll-cta {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  animation: bounce 2s infinite;
+  z-index: 2;
+}
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ── MAP SECTION ── */
+.map-section {
+  padding: 80px 0 60px;
+  background: #fff;
+}
+.map-section h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--navy);
+}
+.section-sub {
+  text-align: center;
+  color: var(--gray);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+#map {
+  width: 90%;
+  max-width: 1100px;
+  height: 500px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+.map-legend {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--gray);
+}
+.legend-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+}
+
+/* ── CONTAINER ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── CITY SECTION ── */
+.city-section {
+  padding: 80px 0 40px;
+}
+.city-header {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 400px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+}
+.city-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.city-header .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  color: #fff;
+}
+.city-header .city-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+.city-header h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.city-header .city-desc {
+  font-size: 1rem;
+  opacity: 0.85;
+  font-weight: 300;
+}
+
+/* ── INFO CARDS ── */
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.info-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-left: 4px solid;
+}
+.info-card .label {
+  font-size: 0.75rem;
+  color: var(--gray);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.info-card .value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+/* ── DAY BLOCK ── */
+.day-block {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.day-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #f0ede8;
+}
+.day-num {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.day-title { font-size: 1.15rem; font-weight: 600; }
+.day-subtitle { font-size: 0.85rem; color: var(--gray); margin-top: 2px; }
+
+.timeline { padding: 8px 28px 20px; }
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f3ef;
+  position: relative;
+}
+.timeline-item:last-child { border-bottom: none; }
+.time-col {
+  width: 56px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-top: 2px;
+}
+.time-val {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--blue);
+}
+.content-col { flex: 1; }
+.spot-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.spot-desc {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.65;
+}
+.pill {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.pill-dad { background: #dcfce7; color: #166534; }
+.pill-food { background: #fef3c7; color: #92400e; }
+.pill-walk { background: #ede9fe; color: #5b21b6; }
+.pill-hist { background: #dbeafe; color: #1e40af; }
+.pill-photo { background: #fce7f3; color: #9d174d; }
+
+/* ── TRANSPORT BANNER ── */
+.transport-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f0f7ff, #e8f4f8);
+  border: 1px solid #c7dff0;
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+}
+.transport-banner .icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.transport-banner strong { color: var(--navy); }
+
+/* ── PHOTO GALLERY ── */
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 30px 0;
+}
+.photo-item { position: relative; overflow: hidden; border-radius: 12px; }
+.photo-item img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.3s;
+  display: block;
+}
+.photo-item:hover img { transform: scale(1.03); }
+.photo-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 20px 12px 8px;
+  font-weight: 500;
+}
+.photo-source {
+  font-size: 0.6rem;
+  opacity: 0.6;
+  display: block;
+  margin-top: 2px;
+}
+
+/* ── DAY MAP ── */
+.day-map-wrapper {
+  margin: 16px 0 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: relative;
+}
+.day-map {
+  width: 100%;
+  height: 300px;
+}
+.day-map-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f0f7ff;
+  border: 1px solid #c7dff0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.day-map-link:hover { background: #dbeafe; }
+
+/* ── TIPS SECTION ── */
+.tips-section {
+  padding: 80px 0;
+  background: var(--navy);
+  color: #fff;
+}
+.tips-section h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.tips-section .section-sub {
+  text-align: center;
+  opacity: 0.6;
+  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+}
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.tip-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  padding: 28px;
+  backdrop-filter: blur(8px);
+}
+.tip-card .tip-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.tip-card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+.tip-card p { font-size: 0.88rem; opacity: 0.8; line-height: 1.7; }
+
+/* ── BUDGET TABLE ── */
+.budget-section {
+  padding: 80px 0;
+  background: #fff;
+}
+.budget-section h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 2rem;
+}
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.budget-table th {
+  background: var(--navy);
+  color: #fff;
+  padding: 14px 20px;
+  text-align: left;
+  font-weight: 500;
+}
+.budget-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+}
+.budget-table tr:nth-child(even) { background: #faf9f7; }
+.budget-table .total-row { background: #f0f7ff; font-weight: 700; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 60px 24px;
+  background: var(--cream);
+  color: var(--gray);
+  font-size: 0.85rem;
+}
+.footer .big { font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .city-header { height: 280px; }
+  .city-header .overlay { padding: 24px; }
+  .city-header h2 { font-size: 1.6rem; }
+  .photo-gallery { grid-template-columns: 1fr; }
+  .photo-item img { height: 200px; }
+  #map { height: 350px; width: 95%; }
+  .route-arrow { width: 20px; }
+  .day-head { padding: 16px 20px; }
+  .timeline { padding: 8px 20px 16px; }
+  .day-map { height: 240px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>아버지와 함께하는 유럽 8박 9일</h1>
+    <p class="subtitle">뮌헨 · 잘츠부르크 · 할슈타트 · 프랑크푸르트</p>
+    <div class="date-badge">2026. 6. 5 (목) — 6. 13 (금) &nbsp;|&nbsp; 2인 &nbsp;|&nbsp; 티웨이 FRA 직항</div>
+
+    <div class="route-flow">
+      <div class="route-node">
+        <div class="route-dot" style="background:#fff"></div>
+        <span class="route-label">인천</span>
+        <span class="route-days">6/5 출발</span>
+      </div>
+      <div class="route-arrow"></div>
+      <div class="route-node">
+        <div class="route-dot" style="background:var(--muc)"></div>
+        <span class="route-label">뮌헨</span>
+        <span class="route-days">3박</span>
+      </div>
+      <div class="route-arrow"></div>
+      <div class="route-node">
+        <div class="route-dot" style="background:var(--sal)"></div>
+        <span class="route-label">잘츠부르크</span>
+        <span class="route-days">2박</span>
+      </div>
+      <div class="route-arrow"></div>
+      <div class="route-node">
+        <div class="route-dot" style="background:var(--hal)"></div>
+        <span class="route-label">할슈타트</span>
+        <span class="route-days">당일</span>
+      </div>
+      <div class="route-arrow"></div>
+      <div class="route-node">
+        <div class="route-dot" style="background:var(--fra)"></div>
+        <span class="route-label">프랑크푸르트</span>
+        <span class="route-days">1박</span>
+      </div>
+      <div class="route-arrow"></div>
+      <div class="route-node">
+        <div class="route-dot" style="background:#fff"></div>
+        <span class="route-label">인천</span>
+        <span class="route-days">6/13 도착</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cta">▼ 아래로 스크롤</div>
+</section>
+
+<!-- ═══════════════ MAIN MAP ═══════════════ -->
+<section class="map-section">
+  <h2>전체 여행 경로</h2>
+  <p class="section-sub">프랑크푸르트 → 뮌헨 → 잘츠부르크 → 할슈타트 → 프랑크푸르트</p>
+  <div id="map"></div>
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--muc)"></div>뮌헨 (D1–3)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--sal)"></div>잘츠부르크 (D4–5)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--hal)"></div>할슈타트 (D6)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--fra)"></div>프랑크푸르트 (D7–8)</div>
+  </div>
+</section>
+
+<!-- ═══════════════ MÜNCHEN D1–3 ═══════════════ -->
+<section class="city-section" id="munich" style="background: var(--cream);">
+  <div class="container">
+    <div class="city-header">
+      <!-- Wikimedia: Marienplatz & Neues Rathaus panorama -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Rathaus_and_Marienplatz_from_Peterskirche_-_August_2006.jpg/1280px-Rathaus_and_Marienplatz_from_Peterskirche_-_August_2006.jpg" alt="뮌헨 마리엔광장과 신시청사" loading="lazy">
+      <div class="overlay">
+        <div class="city-tag">Germany · Bavaria</div>
+        <h2>뮌헨 (München)</h2>
+        <div class="city-desc">D1–D3 · 바이에른의 심장, 맥주와 왕궁의 도시</div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-card" style="border-color: var(--muc);">
+        <div class="label">숙소 추천 지역</div>
+        <div class="value">마리엔광장 반경 1km</div>
+      </div>
+      <div class="info-card" style="border-color: var(--muc);">
+        <div class="label">FRA → MUC 이동</div>
+        <div class="value">ICE 기차 약 3시간 10분</div>
+      </div>
+      <div class="info-card" style="border-color: var(--muc);">
+        <div class="label">시내 교통</div>
+        <div class="value">MVV 1일권 €9.2</div>
+      </div>
+      <div class="info-card" style="border-color: var(--muc);">
+        <div class="label">체류</div>
+        <div class="value">3박 (6/5 ~ 6/8)</div>
+      </div>
+    </div>
+
+    <!-- DAY 1 -->
+    <div class="transport-banner">
+      <div class="icon">✈️</div>
+      <div><strong>인천 → 프랑크푸르트 → 뮌헨</strong><br>티웨이 TW901 ICN 09:50 → FRA 16:50 (12h) · FRA 공항 지하 DB역 → ICE로 뮌헨 중앙역 (3h10, 사전 예매 €29~)</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--muc);">1</div>
+        <div>
+          <div class="day-title">6/5 (목) — 프랑크푸르트 도착 → 뮌헨 이동</div>
+          <div class="day-subtitle">ICN 09:50 출발 / FRA 16:50 도착 / MUC 21:00 도착</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">17:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">FRA 공항 → 뮌헨 중앙역 (München Hbf)</div>
+            <div class="spot-desc">프랑크푸르트 공항 지하 DB 기차역 바로 연결. ICE 탑승 약 3시간 10분. 사전 예매 시 €29~. DB Navigator 앱에서 모바일 티켓 구매 추천.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">21:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">뮌헨 도착 · 숙소 체크인</div>
+            <div class="spot-desc">마리엔광장 근처 숙소 체크인. 짐 풀고 근처 바이에른 전통 식당에서 슈니첼(Schnitzel) 또는 뷔르스트(Würst)로 첫 저녁.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 1 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day1-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Frankfurt+Airport+(FRA)/M%C3%BCnchen+Hauptbahnhof/Marienplatz,+Munich/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 1 전체 경로 보기 (대중교통)
+      </a>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--muc);">2</div>
+        <div>
+          <div class="day-title">6/6 (금) — 뮌헨 구시가 + 영국정원</div>
+          <div class="day-subtitle">도보 중심 · 체력 조절 하루</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">마리엔광장 & 신시청사 (Neues Rathaus) <span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">글로켄슈필 종탑 공연 11:00 / 12:00 / 17:00. 광장 주변 카페에서 바이에른식 아침 — 브레첼(Brezel) + 커피로 시작.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">10:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">레지덴츠 궁전 (Residenz München) <span class="pill pill-hist">역사</span></div>
+            <div class="spot-desc">바이에른 왕가 궁전. 실내 관람 약 1.5시간. 입장료 성인 €9. 방 130개 — 안티쿠아리움 홀이 하이라이트.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">12:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">점심 — 호프브로이하우스 (Hofbräuhaus) <span class="pill pill-dad">아버지 강추</span><span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">1589년 개업, 세계에서 가장 유명한 맥주집. 1리터 마스(Maß) 맥주와 슈바인스학세(족발) 추천. 라이브 전통 음악.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">14:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">영국정원 (Englischer Garten) <span class="pill pill-walk">산책</span></div>
+            <div class="spot-desc">뉴욕 센트럴파크보다 큰 도심 공원. 아이스바흐(Eisbach) 파도타기 구경. 아버지랑 벤치에서 맥주 한 캔.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">18:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">빅투알리엔 시장 (Viktualienmarkt)</div>
+            <div class="spot-desc">야외 비어가르텐. 현지 소시지, 치즈, 과일 구경. 다음날 아침 장 미리 파악.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day2-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Marienplatz,+Munich/Residenz+M%C3%BCnchen/Hofbr%C3%A4uhaus+M%C3%BCnchen/Englischer+Garten,+Munich/Viktualienmarkt,+Munich/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 2 도보 경로 보기
+      </a>
+    </div>
+
+    <!-- DAY 2 PHOTOS -->
+    <div class="photo-gallery">
+      <div class="photo-item">
+        <!-- Wikimedia: Neues Rathaus at Marienplatz -->
+        <img src="https://images.unsplash.com/photo-1670124521018-1c3d1f7c762b?w=800&q=80" alt="마리엔광장 신시청사" loading="lazy">
+        <div class="photo-caption">마리엔광장 신시청사<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Hofbräuhaus interior -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Schwemme_im_Hofbr%C3%A4uhaus-_Decke_H._Kaspar.jpg/1024px-Schwemme_im_Hofbr%C3%A4uhaus-_Decke_H._Kaspar.jpg" alt="호프브로이하우스 내부" loading="lazy">
+        <div class="photo-caption">호프브로이하우스 맥주홀<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Eisbach surfers -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/M%C3%BCnchen%2C_Monopteros_%28im_Englischen_Garten%29_--_2011_--_1.jpg/1024px-M%C3%BCnchen%2C_Monopteros_%28im_Englischen_Garten%29_--_2011_--_1.jpg" alt="영국정원 모노프테로스" loading="lazy">
+        <div class="photo-caption">영국정원 모노프테로스<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="transport-banner">
+      <div class="icon">🚂</div>
+      <div><strong>뮌헨 → 퓌센 (노이슈반슈타인 성)</strong><br>바이에른 티켓 €31(1인) + €8(추가 1인) = €39 · 뮌헨 중앙역 → 퓌센 기차 2h · 퓌센역 → 성 버스 78번 or 택시 €15</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--muc);">3</div>
+        <div>
+          <div class="day-title">6/7 (토) — 노이슈반슈타인 성 당일치기</div>
+          <div class="day-subtitle">왕복 약 4시간 이동 · 조기 출발 필수</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">07:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">뮌헨 중앙역 출발</div>
+            <div class="spot-desc">바이에른 티켓(Bayern-Ticket) 사용. 퓌센행 기차 약 2시간. 현지 버스 78번 환승 또는 택시(€15).</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">10:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">노이슈반슈타인 성 <span class="pill pill-hist">역사</span><span class="pill pill-photo">포토스팟</span></div>
+            <div class="spot-desc">루트비히 2세가 지은 동화 속 성. 디즈니 성의 모델. 마리엔 다리(Marienbrücke)에서 전경 사진 필수! 입장 사전 예약 필수.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">12:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">알프스 뷰 레스토랑 점심 <span class="pill pill-dad">아버지 픽</span></div>
+            <div class="spot-desc">Café Neuschwanstein — 알프스 설산을 배경으로 식사. 아버지랑 사진 많이 찍기.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">14:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">호엔슈방가우 성 (선택)</div>
+            <div class="spot-desc">길 건너 노란색 성. 루트비히 2세 어린 시절 궁전. 추가 30분 소요.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">17:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">뮌헨 복귀</div>
+            <div class="spot-desc">체력 소모 많은 날. 저녁은 숙소 근처에서 편하게, 일찍 휴식.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day3-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/M%C3%BCnchen+Hauptbahnhof/F%C3%BCssen+Bahnhof/Neuschwanstein+Castle/Hohenschwangau+Castle/M%C3%BCnchen+Hauptbahnhof/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 3 경로 보기 (기차+버스)
+      </a>
+    </div>
+
+    <div class="photo-gallery">
+      <div class="photo-item">
+        <!-- Wikimedia: Neuschwanstein Castle classic view -->
+        <img src="https://images.unsplash.com/photo-1605887123413-2275edbe6dfd?w=800&q=80" alt="노이슈반슈타인 성" loading="lazy">
+        <div class="photo-caption">노이슈반슈타인 성<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Marienbrücke view of Neuschwanstein -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Neuschwanstein_Castle_from_Marienbr%C3%BCcke%2C_2011_May.jpg/1024px-Neuschwanstein_Castle_from_Marienbr%C3%BCcke%2C_2011_May.jpg" alt="마리엔 다리에서 본 노이슈반슈타인" loading="lazy">
+        <div class="photo-caption">마리엔 다리에서 본 전경<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Hohenschwangau Castle -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Schloss_Hohenschwangau_2021.jpg/1024px-Schloss_Hohenschwangau_2021.jpg" alt="호엔슈방가우 성" loading="lazy">
+        <div class="photo-caption">호엔슈방가우 성<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SALZBURG D4–5 ═══════════════ -->
+<section class="city-section" id="salzburg" style="background: #fff;">
+  <div class="container">
+    <div class="city-header">
+      <!-- Wikimedia: Salzburg old town panorama -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Old_Town_Salzburg_across_the_Salzach_river.jpg/1280px-Old_Town_Salzburg_across_the_Salzach_river.jpg" alt="잘츠부르크 구시가 전경" loading="lazy">
+      <div class="overlay">
+        <div class="city-tag">Austria · Salzburgerland</div>
+        <h2>잘츠부르크 (Salzburg)</h2>
+        <div class="city-desc">D4–D5 · 모차르트의 고향, 사운드 오브 뮤직의 배경</div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-card" style="border-color: var(--sal);">
+        <div class="label">숙소 추천 지역</div>
+        <div class="value">구시가 or 마카르트광장</div>
+      </div>
+      <div class="info-card" style="border-color: var(--sal);">
+        <div class="label">MUC → SZG</div>
+        <div class="value">기차 1시간 40분 / €20~</div>
+      </div>
+      <div class="info-card" style="border-color: var(--sal);">
+        <div class="label">시내 이동</div>
+        <div class="value">대부분 도보 가능</div>
+      </div>
+      <div class="info-card" style="border-color: var(--sal);">
+        <div class="label">체류</div>
+        <div class="value">2박 (6/8 ~ 6/10)</div>
+      </div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div class="transport-banner">
+      <div class="icon">🚂</div>
+      <div><strong>뮌헨 → 잘츠부르크</strong><br>RJ 또는 EC 기차 · 1시간 40분 · €20~ · 잘자흐강 따라 알프스 풍경. 기차 오른쪽 좌석 추천(산 뷰).</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--sal);">4</div>
+        <div>
+          <div class="day-title">6/8 (일) — 뮌헨 마지막 아침 → 잘츠부르크</div>
+          <div class="day-subtitle">오전 빅투알리엔 시장 → 기차 → 오후 구시가</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">빅투알리엔 시장 아침 <span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">뮌헨 마지막 아침. 흰 소시지(Weißwurst) + 달콤한 머스터드 + 브레첼 세트. 오전 10시 전에만 먹는 전통 아침.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">11:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">뮌헨 중앙역 → 잘츠부르크 기차</div>
+            <div class="spot-desc">RJ 또는 EC 기차. 잘자흐강을 따라 알프스 풍경이 펼쳐짐.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">13:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘츠부르크 도착 · 숙소 체크인</div>
+            <div class="spot-desc">짐 맡기고 바로 구시가로 출발.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">14:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">게트라이데가세 골목 + 모차르트 생가 <span class="pill pill-hist">역사</span></div>
+            <div class="spot-desc">중세 좁은 골목에 금속 철제 간판들이 줄지은 거리. 모차르트 생가 관람.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">16:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘자흐강변 산책 <span class="pill pill-walk">산책</span></div>
+            <div class="spot-desc">마카르트 다리(Makartsteg) 자물쇠 구경. 호엔잘츠부르크 성 바라보며 강변 카페에서 커피.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">19:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">저녁 — 스티글켈러 비어가르텐 <span class="pill pill-dad">아버지 강추</span></div>
+            <div class="spot-desc">호엔잘츠부르크 성 아래 야외 맥주집. 성 야경을 바라보며 맥주.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 4 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day4-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Viktualienmarkt,+Munich/M%C3%BCnchen+Hauptbahnhof/Salzburg+Hauptbahnhof/Getreidegasse,+Salzburg/Makartsteg,+Salzburg/Stieglkeller,+Salzburg/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 4 경로 보기 (기차+도보)
+      </a>
+    </div>
+
+    <!-- DAY 5 -->
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--sal);">5</div>
+        <div>
+          <div class="day-title">6/9 (월) — 호엔잘츠부르크 성 + 미라벨 정원</div>
+          <div class="day-subtitle">잘츠부르크 핵심 하루</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">호엔잘츠부르크 성 (케이블카) <span class="pill pill-hist">역사</span></div>
+            <div class="spot-desc">11세기 축성 알프스 요새. 케이블카(Festungsbahn) 왕복 €14. 시내+알프스 파노라마 360° 뷰.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">11:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘츠부르크 대성당 <span class="pill pill-hist">역사</span></div>
+            <div class="spot-desc">바로크 양식 대성당. 모차르트가 세례받은 곳. 무료 입장.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">12:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">점심 — 카페 자허 잘츠부르크 <span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">자허토르테(Sachertorte) 원조 카페. 초코케이크 + 아인슈페너 세트.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">14:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">미라벨 궁전 & 정원 <span class="pill pill-photo">포토스팟</span></div>
+            <div class="spot-desc">사운드 오브 뮤직 촬영지. 알프스 배경 꽃밭 정원. 입장 무료.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">16:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">모차르트 광장 & 기념품 쇼핑</div>
+            <div class="spot-desc">모차르트 쿠겔(초코볼) 선물용 구입. Fürst 가게 직접 방문 추천.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">19:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">저녁 — 오스트리아식 슈니첼</div>
+            <div class="spot-desc">Wiener Schnitzel + 오스트리아 화이트와인.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day5-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Festung+Hohensalzburg/Salzburger+Dom/Caf%C3%A9+Sacher+Salzburg/Mirabell+Palace,+Salzburg/Mozartplatz,+Salzburg/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 5 도보 경로 보기
+      </a>
+    </div>
+
+    <div class="photo-gallery">
+      <div class="photo-item">
+        <!-- Wikimedia: Hohensalzburg Fortress -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Salzburg_Altstadt_Panorama_20170409_02.jpg/1024px-Salzburg_Altstadt_Panorama_20170409_02.jpg" alt="호엔잘츠부르크 성" loading="lazy">
+        <div class="photo-caption">호엔잘츠부르크 성<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Mirabell Gardens -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Salzburg_Mirabellgarten_Festung.jpg/1024px-Salzburg_Mirabellgarten_Festung.jpg" alt="미라벨 정원" loading="lazy">
+        <div class="photo-caption">미라벨 정원<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Getreidegasse -->
+        <img src="https://images.unsplash.com/photo-1695403087340-ad52ee6792f3?w=800&q=80" alt="게트라이데가세" loading="lazy">
+        <div class="photo-caption">게트라이데가세 골목<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HALLSTATT D6 ═══════════════ -->
+<section class="city-section" id="hallstatt" style="background: var(--cream);">
+  <div class="container">
+    <div class="city-header">
+      <!-- Wikimedia: Hallstatt classic view -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Hallstatt_300.jpg" alt="할슈타트 전경" loading="lazy">
+      <div class="overlay">
+        <div class="city-tag">Austria · Salzkammergut · UNESCO</div>
+        <h2>할슈타트 (Hallstatt)</h2>
+        <div class="city-desc">D6 · 알프스 호숫가 동화마을, 유네스코 세계문화유산</div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-card" style="border-color: var(--hal);">
+        <div class="label">이동</div>
+        <div class="value">버스+페리 왕복 약 3시간</div>
+      </div>
+      <div class="info-card" style="border-color: var(--hal);">
+        <div class="label">추천 출발</div>
+        <div class="value">07:30 (안개 절경)</div>
+      </div>
+      <div class="info-card" style="border-color: var(--hal);">
+        <div class="label">스카이워크</div>
+        <div class="value">케이블카+도보 20분</div>
+      </div>
+      <div class="info-card" style="border-color: var(--hal);">
+        <div class="label">숙박</div>
+        <div class="value">당일치기 or 1박</div>
+      </div>
+    </div>
+
+    <div class="transport-banner">
+      <div class="icon">🚌</div>
+      <div><strong>잘츠부르크 → 할슈타트</strong><br>버스 150번 · 잘츠부르크 → Bad Ischl 환승 → 할슈타트 선착장 약 1시간 20분 · 선착장에서 페리 5분으로 마을 진입</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--hal);">6</div>
+        <div>
+          <div class="day-title">6/10 (화) — 할슈타트 당일치기</div>
+          <div class="day-subtitle">알프스 호수 마을 · 아버지 반응 보장 ★</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">07:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘츠부르크 출발 (버스 150번)</div>
+            <div class="spot-desc">선착장까지 약 1시간 20분. 아침 이슬과 안개 낀 알프스 호수가 하이라이트 — 늦게 가면 손해!</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">페리로 마을 진입 <span class="pill pill-photo">감동 포인트</span></div>
+            <div class="spot-desc">선착장에서 페리 5분. 호수 위에서 바라보는 할슈타트 마을 + 알프스 첫 뷰. 여행 전체 하이라이트.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">마을 산책 & 가톨릭 성당 <span class="pill pill-walk">산책</span></div>
+            <div class="spot-desc">세계에서 가장 오래된 소금 광산 투어 선택 가능 (€35). 마을 골목 구석구석.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">11:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">할슈타트 스카이워크 전망대 <span class="pill pill-dad">아버지 픽</span><span class="pill pill-photo">포토스팟</span></div>
+            <div class="spot-desc">케이블카 + 도보 20분. 마을과 호수를 내려다보는 절경. 이날 사진 최고 컷.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">13:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">점심 — 호숫가 레스토랑 <span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">Gasthof Simony 추천. 호수 뷰 테라스에서 송어 요리(Forelle) 필수.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">15:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘츠부르크 복귀</div>
+            <div class="spot-desc">페리 + 버스 역순. 저녁은 잘츠부르크에서 가볍게.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 6 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day6-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Salzburg+Hauptbahnhof/Bad+Ischl/Hallstatt/Salzburg+Hauptbahnhof/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 6 경로 보기 (버스+페리)
+      </a>
+    </div>
+
+    <div class="photo-gallery">
+      <div class="photo-item">
+        <!-- Wikimedia: Hallstatt from lake -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Hallstatt_at_Lake_Hallstatt_-_2.jpg/1024px-Hallstatt_at_Lake_Hallstatt_-_2.jpg" alt="할슈타트 호수에서 본 마을" loading="lazy">
+        <div class="photo-caption">페리에서 본 할슈타트<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Hallstatt Skywalk -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/1089_-_Hallstatt_-_Salzbergwerk_-_Salt_Lamps.JPG/1024px-1089_-_Hallstatt_-_Salzbergwerk_-_Salt_Lamps.JPG" alt="할슈타트 소금광산" loading="lazy">
+        <div class="photo-caption">할슈타트 소금광산 투어<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Hallstatt village street -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Hallstatt_001.jpg/1024px-Hallstatt_001.jpg" alt="할슈타트 마을 골목" loading="lazy">
+        <div class="photo-caption">할슈타트 가톨릭 성당<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FRANKFURT D7–8 ═══════════════ -->
+<section class="city-section" id="frankfurt" style="background: #fff;">
+  <div class="container">
+    <div class="city-header">
+      <!-- Wikimedia: Frankfurt Römerberg -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Frankfurt_am_Main%2C_Ostzeile_am_Samstagsberg_--_2015_--_6679.jpg/1280px-Frankfurt_am_Main%2C_Ostzeile_am_Samstagsberg_--_2015_--_6679.jpg" alt="프랑크푸르트 뢰머광장" loading="lazy">
+      <div class="overlay">
+        <div class="city-tag">Germany · Hessen</div>
+        <h2>프랑크푸르트 (Frankfurt)</h2>
+        <div class="city-desc">D7–D8 · 중세 광장과 현대 스카이라인이 공존하는 도시</div>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-card" style="border-color: var(--fra);">
+        <div class="label">SZG → FRA</div>
+        <div class="value">기차 약 3시간 30분~4시간</div>
+      </div>
+      <div class="info-card" style="border-color: var(--fra);">
+        <div class="label">숙소 추천</div>
+        <div class="value">공항 or 뢰머광장 근처</div>
+      </div>
+      <div class="info-card" style="border-color: var(--fra);">
+        <div class="label">귀국 항공</div>
+        <div class="value">FRA 18:50 출발</div>
+      </div>
+      <div class="info-card" style="border-color: var(--fra);">
+        <div class="label">공항 이동</div>
+        <div class="value">S8/S9 15분</div>
+      </div>
+    </div>
+
+    <!-- DAY 7 -->
+    <div class="transport-banner">
+      <div class="icon">🚂</div>
+      <div><strong>잘츠부르크 → 프랑크푸르트</strong><br>SZG → MUC (1h40) → FRA (2h) 뮌헨 환승 · 총 약 4시간 · DB 앱 사전 예매 시 €40~</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--fra);">7</div>
+        <div>
+          <div class="day-title">6/11 (수) — 잘츠부르크 → 프랑크푸르트 이동</div>
+          <div class="day-subtitle">이동 + 구시가 저녁 산책</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">잘츠부르크 체크아웃 · 기차 출발</div>
+            <div class="spot-desc">SZG → MUC(1h40) → FRA(2h) 뮌헨 환승. 총 약 4시간. 환승 시간 30분 이상 여유.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">14:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">프랑크푸르트 도착 · 숙소 체크인</div>
+            <div class="spot-desc">공항 근처 숙소 권장 (마지막 날 편의). 또는 구시가 근처도 OK.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">15:30</span></div>
+          <div class="content-col">
+            <div class="spot-name">뢰머광장 (Römerberg) <span class="pill pill-hist">역사</span><span class="pill pill-photo">포토스팟</span></div>
+            <div class="spot-desc">중세 목골 건물들이 늘어선 프랑크푸르트 상징 광장. 정의의 여신상과 함께 사진.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">17:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">마인강변 산책 <span class="pill pill-walk">산책</span></div>
+            <div class="spot-desc">무제움스우퍼 강변. 아이젤너 다리(Eiserner Steg)에서 석양 감상.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">19:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">저녁 — 자흐센하우젠 사과주 골목 <span class="pill pill-food">음식</span></div>
+            <div class="spot-desc">Apfelwein(사과 발효주) 프랑크푸르트 명물. Wagner 또는 Dauth-Schneider 추천.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 7 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day7-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/Frankfurt+Hauptbahnhof/R%C3%B6merberg,+Frankfurt/Eiserner+Steg,+Frankfurt/Sachsenh%C3%A4user+Warte,+Frankfurt/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 7 도보 경로 보기
+      </a>
+    </div>
+
+    <!-- DAY 8 -->
+    <div class="transport-banner">
+      <div class="icon">✈️</div>
+      <div><strong>프랑크푸르트 → 인천</strong><br>티웨이 TW902 FRA 18:50 → ICN 6/13 14:00 (12h10 직항) · 공항 S반(S8/S9) 15분 · 3시간 전 도착 권장</div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-head">
+        <div class="day-num" style="background: var(--fra);">8</div>
+        <div>
+          <div class="day-title">6/12 (금) — 프랑크푸르트 자유 → 귀국</div>
+          <div class="day-subtitle">FRA 18:50 탑승 · 3시간 전 공항 도착</div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">09:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">자유 시간</div>
+            <div class="spot-desc">슈테델 미술관 · 카이저돔 대성당 · 또는 마지막 유럽 기념품 쇼핑.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">13:00</span></div>
+          <div class="content-col">
+            <div class="spot-name">점심 후 공항 이동</div>
+            <div class="spot-desc">S반(S8/S9) 약 15분. 티웨이 카운터 3시간 전 도착 권장. 면세 쇼핑.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="time-col"><span class="time-val">18:50</span></div>
+          <div class="content-col">
+            <div class="spot-name">FRA 출발 → ICN 6/13 14:00 도착</div>
+            <div class="spot-desc">12시간 10분 직항. 기내에서 9일치 여행 사진 정리하기!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 8 MAP -->
+    <div class="day-map-wrapper">
+      <div id="day8-map" class="day-map"></div>
+      <a class="day-map-link" href="https://www.google.com/maps/dir/R%C3%B6merberg,+Frankfurt/St%C3%A4del+Museum,+Frankfurt/Kaiserdom+St.+Bartholom%C3%A4us,+Frankfurt/Frankfurt+Airport+(FRA)/" target="_blank" rel="noopener">
+        🗺️ Google Maps에서 Day 8 경로 보기 (도보+S반)
+      </a>
+    </div>
+
+    <div class="photo-gallery">
+      <div class="photo-item">
+        <!-- Wikimedia: Römerberg square -->
+        <img src="https://images.unsplash.com/photo-1638648153951-d64fdb07b0d3?w=800&q=80" alt="뢰머광장" loading="lazy">
+        <div class="photo-caption">뢰머광장 목골 건물<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Frankfurt Skyline from Eiserner Steg -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Frankfurt_Am_Main-Stadtpanorama_von_der_Deutschherrnbruecke_am_fruehen_Abend-20100310.jpg/1024px-Frankfurt_Am_Main-Stadtpanorama_von_der_Deutschherrnbruecke_am_fruehen_Abend-20100310.jpg" alt="마인강변 스카이라인" loading="lazy">
+        <div class="photo-caption">마인강변 스카이라인<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+      <div class="photo-item">
+        <!-- Wikimedia: Apfelwein -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Apfelwein_Geripptes_Bembel.jpg/1024px-Apfelwein_Geripptes_Bembel.jpg" alt="아펠바인 사과주" loading="lazy">
+        <div class="photo-caption">Apfelwein 사과주<span class="photo-source">Wikimedia Commons</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TIPS ═══════════════ -->
+<section class="tips-section" id="tips">
+  <div class="container">
+    <h2>실전 여행 팁</h2>
+    <p class="section-sub">아버지와의 여행을 더 편하고 알차게 만들어 줄 꿀팁</p>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🎫</div>
+        <h3>항공·기차 예매 순서</h3>
+        <p>DB(도이치반) 앱 설치 → 뮌헨+잘츠부르크+프랑크푸르트 구간 먼저 예매. 바이에른 티켓(€31+€8/추가 1인)으로 노이슈반슈타인 포함 근교 이동. ICE 사전 예매 시 €20~29 가능 (당일은 2~3배).</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🏰</div>
+        <h3>노이슈반슈타인 예약 필수!</h3>
+        <p>onlineshop.hohenschwangau.de 에서 반드시 사전 예약. 현장 판매 거의 없고 줄 매우 김. 6/7 오전 10시 타임슬롯 노리기. 여행 2~3주 전 예약 권장.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💪</div>
+        <h3>아버지 체력 관리</h3>
+        <p>하루 이동 스팟 3개 이하 유지. 점심 후 30분 카페 휴식 루틴. 뮌헨 이동은 U반+트램 위주. 할슈타트 스카이워크는 체력 보고 선택.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">💳</div>
+        <h3>현지 결제 & 환전</h3>
+        <p>독일·오스트리아 모두 카드 결제 잘 됨. 소규모 식당만 현금 필요. 트래블월렛 또는 카카오뱅크 체크카드로 수수료 절약. 환전은 소액만.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📱</div>
+        <h3>통신·데이터</h3>
+        <p>독일+오스트리아 EU권 — 유럽 유심 1개로 커버. 공항 도착 후 바로 교체. 알로짐·유심사 국내 선구매 시 공항 로밍보다 60% 저렴.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🏨</div>
+        <h3>숙소 지금 바로 예약!</h3>
+        <p>할슈타트 1박 원하면 즉시 예약 (성수기 마을 전체 방 약 30개). 뮌헨 6월 중순 축제 시즌 — 마리엔광장 1km 내 숙소 지금 바로 잡기.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ BUDGET ═══════════════ -->
+<section class="budget-section" id="budget">
+  <div class="container">
+    <h2>예상 경비 총정리 (2인 기준)</h2>
+    <table class="budget-table">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>내역</th>
+          <th style="text-align:right">예상 비용</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>항공</td>
+          <td>티웨이 ICN↔FRA 직항 왕복 2인</td>
+          <td style="text-align:right">₩2,563,900</td>
+        </tr>
+        <tr>
+          <td>기차</td>
+          <td>FRA→MUC €29 + MUC→SZG €20 + SZG→FRA €40 + 바이에른 티켓 €39</td>
+          <td style="text-align:right">~€256 (₩380,000)</td>
+        </tr>
+        <tr>
+          <td>숙소</td>
+          <td>6박 (뮌헨3+잘츠부르크2+프랑크푸르트1), 1박 평균 €100</td>
+          <td style="text-align:right">~€600 (₩890,000)</td>
+        </tr>
+        <tr>
+          <td>식비</td>
+          <td>1일 2인 약 €60~80 × 8일</td>
+          <td style="text-align:right">~€560 (₩830,000)</td>
+        </tr>
+        <tr>
+          <td>입장료</td>
+          <td>레지덴츠 €18 + 노이슈반슈타인 €30 + 호엔잘츠부르크 €28 + 기타</td>
+          <td style="text-align:right">~€100 (₩150,000)</td>
+        </tr>
+        <tr>
+          <td>시내교통</td>
+          <td>MVV 1일권 + 할슈타트 버스+페리 + 공항 S반 등</td>
+          <td style="text-align:right">~€60 (₩90,000)</td>
+        </tr>
+        <tr>
+          <td>유심·보험</td>
+          <td>유럽 유심 2개 + 여행자보험 2인</td>
+          <td style="text-align:right">₩100,000</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="2" style="text-align:right; font-size:1.05rem;">2인 총 예상 경비</td>
+          <td style="text-align:right; font-size:1.1rem;">약 ₩5,000,000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<section class="footer">
+  <div class="big">즐거운 여행 되세요! ✈️</div>
+  <p>티웨이항공 ICN→FRA 09:50 / FRA→ICN 18:50 | 2인 항공 합계 ₩2,563,900</p>
+  <p style="margin-top: 12px; opacity: 0.6;">아버지와 함께하는 유럽 8박 9일 총망라 가이드 · 2026년 6월</p>
+</section>
+
+<!-- ═══════════════ MAP SCRIPTS ═══════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const tileAttr = '© OpenStreetMap';
+
+  // Helper: create icon
+  function makeIcon(color, size) {
+    size = size || 16;
+    return L.divIcon({
+      className: '',
+      html: '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+color+';border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
+      iconSize: [size, size],
+      iconAnchor: [size/2, size/2],
+      popupAnchor: [0, -size/2]
+    });
+  }
+
+  // Helper: numbered icon
+  function makeNumberIcon(color, num) {
+    return L.divIcon({
+      className: '',
+      html: '<div style="width:28px;height:28px;border-radius:50%;background:'+color+';border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;font-family:sans-serif;">'+num+'</div>',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -16]
+    });
+  }
+
+  // Helper: create a day map
+  function createDayMap(id, spots, color, routePoints) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const m = L.map(el, { scrollWheelZoom: false, zoomControl: true });
+    L.tileLayer(tileUrl, { attribution: tileAttr, maxZoom: 18 }).addTo(m);
+
+    spots.forEach(function(s, i) {
+      L.marker([s.lat, s.lng], { icon: makeNumberIcon(color, i + 1) })
+        .addTo(m)
+        .bindPopup('<strong>' + s.name + '</strong>' + (s.time ? '<br>' + s.time : ''));
+    });
+
+    // Route line
+    var pts = routePoints || spots.map(function(s) { return [s.lat, s.lng]; });
+    L.polyline(pts, { color: color, weight: 3, opacity: 0.6, dashArray: '6,6' }).addTo(m);
+
+    // Fit
+    var bounds = L.latLngBounds(pts);
+    m.fitBounds(bounds, { padding: [35, 35] });
+    return m;
+  }
+
+  // ═══ MAIN MAP ═══
+  const mainMap = L.map('map', { scrollWheelZoom: false }).setView([48.2, 12.5], 7);
+  L.tileLayer(tileUrl, { attribution: tileAttr, maxZoom: 18 }).addTo(mainMap);
+
+  const locs = {
+    fra: { lat: 50.1109, lng: 8.6821, name: '프랑크푸르트', color: '#ef4444', days: 'D7–8' },
+    muc: { lat: 48.1351, lng: 11.5820, name: '뮌헨', color: '#3b82f6', days: 'D1–3' },
+    neu: { lat: 47.5576, lng: 10.7498, name: '노이슈반슈타인 성', color: '#8b5cf6', days: 'D3 당일' },
+    sal: { lat: 47.8095, lng: 13.0550, name: '잘츠부르크', color: '#10b981', days: 'D4–5' },
+    hal: { lat: 47.5622, lng: 13.6493, name: '할슈타트', color: '#f59e0b', days: 'D6 당일' }
+  };
+
+  for (var k in locs) {
+    var l = locs[k];
+    L.marker([l.lat, l.lng], { icon: makeIcon(l.color, 20) }).addTo(mainMap)
+      .bindPopup('<strong>' + l.name + '</strong><br>' + l.days);
+  }
+
+  L.polyline([
+    [locs.fra.lat, locs.fra.lng],
+    [locs.muc.lat, locs.muc.lng],
+    [locs.sal.lat, locs.sal.lng],
+    [locs.hal.lat, locs.hal.lng],
+    [locs.sal.lat, locs.sal.lng],
+    [locs.fra.lat, locs.fra.lng]
+  ], { color: '#2d5faa', weight: 3, opacity: 0.7, dashArray: '8,8' }).addTo(mainMap);
+
+  L.polyline([
+    [locs.muc.lat, locs.muc.lng],
+    [locs.neu.lat, locs.neu.lng]
+  ], { color: '#8b5cf6', weight: 2, opacity: 0.5, dashArray: '4,8' }).addTo(mainMap);
+
+  mainMap.fitBounds(L.latLngBounds(Object.values(locs).map(function(l) { return [l.lat, l.lng]; })), { padding: [40, 40] });
+
+  // ═══ DAY 1: FRA Airport → Munich Hbf → Marienplatz ═══
+  createDayMap('day1-map', [
+    { lat: 50.0379, lng: 8.5622, name: 'FRA 공항', time: '16:50 도착' },
+    { lat: 48.1402, lng: 11.5600, name: '뮌헨 중앙역 (Hbf)', time: '~21:00 ICE 도착' },
+    { lat: 48.1374, lng: 11.5755, name: '마리엔광장 숙소', time: '21:00 체크인' }
+  ], '#3b82f6');
+
+  // ═══ DAY 2: Marienplatz → Residenz → Hofbräuhaus → English Garden → Viktualienmarkt ═══
+  createDayMap('day2-map', [
+    { lat: 48.1374, lng: 11.5755, name: '① 마리엔광장 & 신시청사', time: '09:00' },
+    { lat: 48.1413, lng: 11.5796, name: '② 레지덴츠 궁전', time: '10:30' },
+    { lat: 48.1376, lng: 11.5799, name: '③ 호프브로이하우스', time: '12:30' },
+    { lat: 48.1543, lng: 11.5917, name: '④ 영국정원 (아이스바흐)', time: '14:30' },
+    { lat: 48.1352, lng: 11.5764, name: '⑤ 빅투알리엔 시장', time: '18:00' }
+  ], '#3b82f6');
+
+  // ═══ DAY 3: Munich → Füssen → Neuschwanstein → Hohenschwangau → Munich ═══
+  createDayMap('day3-map', [
+    { lat: 48.1402, lng: 11.5600, name: '① 뮌헨 중앙역', time: '07:30 출발' },
+    { lat: 47.5706, lng: 10.6982, name: '② 퓌센역', time: '~09:30' },
+    { lat: 47.5576, lng: 10.7498, name: '③ 노이슈반슈타인 성', time: '10:00' },
+    { lat: 47.5555, lng: 10.7362, name: '④ 호엔슈방가우 성', time: '14:30' },
+    { lat: 48.1402, lng: 11.5600, name: '⑤ 뮌헨 복귀', time: '17:00' }
+  ], '#8b5cf6');
+
+  // ═══ DAY 4: Munich → Salzburg → Old town ═══
+  createDayMap('day4-map', [
+    { lat: 48.1352, lng: 11.5764, name: '① 빅투알리엔 시장 아침', time: '09:00' },
+    { lat: 48.1402, lng: 11.5600, name: '② 뮌헨 중앙역', time: '11:00' },
+    { lat: 47.8131, lng: 13.0459, name: '③ 잘츠부르크역 도착', time: '13:00' },
+    { lat: 47.8001, lng: 13.0439, name: '④ 게트라이데가세 + 모차르트 생가', time: '14:00' },
+    { lat: 47.8028, lng: 13.0410, name: '⑤ 잘자흐강변 + 마카르트 다리', time: '16:00' },
+    { lat: 47.7964, lng: 13.0471, name: '⑥ 스티글켈러 비어가르텐', time: '19:00' }
+  ], '#10b981');
+
+  // ═══ DAY 5: Hohensalzburg → Dom → Café Sacher → Mirabell → Mozartplatz ═══
+  createDayMap('day5-map', [
+    { lat: 47.7952, lng: 13.0475, name: '① 호엔잘츠부르크 성', time: '09:00' },
+    { lat: 47.7983, lng: 13.0455, name: '② 잘츠부르크 대성당', time: '11:00' },
+    { lat: 47.8003, lng: 13.0387, name: '③ 카페 자허', time: '12:30' },
+    { lat: 47.8054, lng: 13.0428, name: '④ 미라벨 궁전 & 정원', time: '14:00' },
+    { lat: 47.7993, lng: 13.0465, name: '⑤ 모차르트 광장', time: '16:00' }
+  ], '#10b981');
+
+  // ═══ DAY 6: Salzburg → Hallstatt → Salzburg ═══
+  createDayMap('day6-map', [
+    { lat: 47.8131, lng: 13.0459, name: '① 잘츠부르크역 출발', time: '07:30' },
+    { lat: 47.7118, lng: 13.6243, name: '② Bad Ischl 환승', time: '~08:30' },
+    { lat: 47.5603, lng: 13.6461, name: '③ 할슈타트 선착장 (페리)', time: '09:00' },
+    { lat: 47.5622, lng: 13.6493, name: '④ 할슈타트 마을', time: '09:30' },
+    { lat: 47.5571, lng: 13.6429, name: '⑤ 스카이워크 전망대', time: '11:00' },
+    { lat: 47.5612, lng: 13.6485, name: '⑥ 호숫가 레스토랑', time: '13:00' },
+    { lat: 47.8131, lng: 13.0459, name: '⑦ 잘츠부르크 복귀', time: '15:00~' }
+  ], '#f59e0b');
+
+  // ═══ DAY 7: Salzburg → Frankfurt → Römerberg → Main river ═══
+  createDayMap('day7-map', [
+    { lat: 47.8131, lng: 13.0459, name: '① 잘츠부르크역 출발', time: '09:00' },
+    { lat: 50.1068, lng: 8.6618, name: '② 프랑크푸르트 중앙역', time: '~14:00' },
+    { lat: 50.1104, lng: 8.6816, name: '③ 뢰머광장', time: '15:30' },
+    { lat: 50.1058, lng: 8.6826, name: '④ 마인강변 아이젤너 다리', time: '17:00' },
+    { lat: 50.1010, lng: 8.6934, name: '⑤ 자흐센하우젠 사과주 골목', time: '19:00' }
+  ], '#ef4444');
+
+  // ═══ DAY 8: Free time → Airport ═══
+  createDayMap('day8-map', [
+    { lat: 50.1104, lng: 8.6816, name: '① 뢰머광장 / 자유시간', time: '09:00' },
+    { lat: 50.1109, lng: 8.6851, name: '② 카이저돔 대성당', time: '10:00' },
+    { lat: 50.1019, lng: 8.6718, name: '③ 슈테델 미술관', time: '11:00' },
+    { lat: 50.0379, lng: 8.5622, name: '④ FRA 공항 (S8/S9)', time: '~15:00' }
+  ], '#ef4444');
+});
+</script>
+</body>
+</html>

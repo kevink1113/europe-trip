@@ -1,0 +1,251 @@
+
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.wrap{padding:1rem 0;font-family:var(--font-sans)}
+.city-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.tab.active{background:#CECBF6;border-color:#AFA9EC;color:#26215C}
+.tab.active.sal{background:#9FE1CB;border-color:#5DCAA5;color:#04342C}
+.tab.active.hal{background:#FAC775;border-color:#EF9F27;color:#412402}
+.tab.active.fra{background:#F5C4B3;border-color:#F0997B;color:#4A1B0C}
+.tab.active.tip{background:#D3D1C7;border-color:#B4B2A9;color:#2C2C2A}
+.section{display:none}
+.section.show{display:block}
+.day-block{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:10px}
+.day-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--color-background-secondary)}
+.day-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.day-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.day-sub{font-size:11px;color:var(--color-text-secondary)}
+.spots{padding:0 14px 12px}
+.spot{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.spot:last-child{border-bottom:none}
+.spot-time{font-size:11px;color:var(--color-text-tertiary);width:36px;flex-shrink:0;padding-top:1px}
+.spot-body{flex:1}
+.spot-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.spot-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-top:2px}
+.tip-pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:500;margin-left:6px;vertical-align:middle}
+.tip-dad{background:#E1F5EE;color:#085041}
+.tip-food{background:#FAEEDA;color:#633806}
+.tip-walk{background:#EEEDFE;color:#3C3489}
+.tip-money{background:#EAF3DE;color:#27500A}
+.transport-row{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--color-background-tertiary);font-size:12px;color:var(--color-text-secondary)}
+.transport-line{flex:1;height:1px;background:var(--color-border-tertiary)}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.info-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.info-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.info-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.tip-block{border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:8px;font-size:13px;line-height:1.6}
+.tip-head{font-size:12px;font-weight:500;margin-bottom:4px}
+.tip-amber{background:#FAEEDA;color:#633806}
+.tip-purple{background:#EEEDFE;color:#3C3489}
+.tip-teal{background:#E1F5EE;color:#085041}
+.tip-coral{background:#FAECE7;color:#712B13}
+.tip-green{background:#EAF3DE;color:#27500A}
+.tip-gray{background:#F1EFE8;color:#2C2C2A}
+@media(prefers-color-scheme:dark){
+.tab.active{background:#3C3489;border-color:#534AB7;color:#CECBF6}
+.tab.active.sal{background:#085041;border-color:#0F6E56;color:#9FE1CB}
+.tab.active.hal{background:#633806;border-color:#854F0B;color:#FAC775}
+.tab.active.fra{background:#712B13;border-color:#993C1D;color:#F5C4B3}
+.tab.active.tip{background:#444441;border-color:#5F5E5A;color:#D3D1C7}
+.tip-dad{background:#085041;color:#9FE1CB}
+.tip-food{background:#633806;color:#FAC775}
+.tip-walk{background:#3C3489;color:#CECBF6}
+.tip-money{background:#27500A;color:#C0DD97}
+.tip-amber{background:#412402;color:#FAC775}
+.tip-purple{background:#26215C;color:#CECBF6}
+.tip-teal{background:#04342C;color:#9FE1CB}
+.tip-coral{background:#4A1B0C;color:#F5C4B3}
+.tip-green{background:#173404;color:#C0DD97}
+.tip-gray{background:#2C2C2A;color:#D3D1C7}
+}
+</style>
+
+<div class="wrap">
+<div class="city-tabs">
+  <div class="tab active" onclick="show('muc',this)">뮌헨 D1–3</div>
+  <div class="tab sal" onclick="show('sal',this)">잘츠부르크 D4–5</div>
+  <div class="tab hal" onclick="show('hal',this)">할슈타트 D6</div>
+  <div class="tab fra" onclick="show('fra',this)">프랑크푸르트 D7–8</div>
+  <div class="tab tip" onclick="show('tip',this)">실전 팁</div>
+</div>
+
+<div id="muc" class="section show">
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">숙소 추천 지역</div><div class="info-val">마리엔광장 반경 1km</div></div>
+    <div class="info-card"><div class="info-label">교통</div><div class="info-val">MVV 1일권 €9.2</div></div>
+    <div class="info-card"><div class="info-label">FRA→MUC</div><div class="info-val">ICE 기차 3h10</div></div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#CECBF6;color:#3C3489">1</div>
+      <div><div class="day-title">6/5 (목) — 프랑크푸르트 도착 → 뮌헨 이동</div><div class="day-sub">ICN 09:50 출발 / FRA 16:50 도착</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">17:30</div><div class="spot-body"><div class="spot-name">FRA 공항 → 뮌헨 중앙역</div><div class="spot-desc">공항 지하 DB 기차역 바로 연결 · ICE 탑승 (약 3h10) · 사전 예매 시 €29~ 가능</div></div></div>
+      <div class="spot"><div class="spot-time">21:00</div><div class="spot-body"><div class="spot-name">뮌헨 도착 · 숙소 체크인</div><div class="spot-desc">마리엔광장 근처 숙소 권장 · 짐 풀고 근처 바이에른 식당에서 슈니첼 or 뷔르스트로 첫 저녁 <span class="tip-pill tip-dad">아버지 픽</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#CECBF6;color:#3C3489">2</div>
+      <div><div class="day-title">6/6 (금) — 뮌헨 구시가 + 영국정원</div><div class="day-sub">도보 중심, 체력 조절 하루</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">마리엔광장 & 신시청사</div><div class="spot-desc">글로켄슈필 종탑 공연 11:00/12:00/17:00 · 광장 주변 카페에서 바이에른식 아침 (브레첼+커피) <span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">10:30</div><div class="spot-body"><div class="spot-name">레지덴츠 궁전 (Residenz)</div><div class="spot-desc">바이에른 왕가 궁전 · 실내 관람 약 1.5h · 입장료 성인 €9 · 화려한 방 130개 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">12:30</div><div class="spot-body"><div class="spot-name">점심 — 호프브로이하우스</div><div class="spot-desc">1589년 개업 세계 최유명 맥줏집 · 1리터 마스 맥주 · 슈바인스학세(족발) 추천 · 아버지 감탄 보장 <span class="tip-pill tip-dad">아버지 픽</span><span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">14:30</div><div class="spot-body"><div class="spot-name">영국정원 (Englischer Garten)</div><div class="spot-desc">뉴욕 센트럴파크보다 큰 도심 공원 · 일본 다원 · 아이스바흐 파도타기 구경 · 아버지랑 벤치에서 맥주 한 캔 <span class="tip-pill tip-walk">산책</span></div></div></div>
+      <div class="spot"><div class="spot-time">18:00</div><div class="spot-body"><div class="spot-name">빅투알리엔 시장 (저녁 전 들르기)</div><div class="spot-desc">야외 비어가르텐 운영 · 소시지·치즈 구경 · 다음날 아침 장 미리 봐두기</div></div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#CECBF6;color:#3C3489">3</div>
+      <div><div class="day-title">6/7 (토) — 노이슈반슈타인 성 당일치기</div><div class="day-sub">왕복 약 4h 이동 · 조기 출발 필수</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">07:30</div><div class="spot-body"><div class="spot-name">뮌헨 중앙역 출발</div><div class="spot-desc">바이에른 티켓 (€31/1장, 2인 €8 추가) · 퓌센(Füssen)행 기차 2h · 현지 버스 환승 or 택시 €15</div></div></div>
+      <div class="spot"><div class="spot-time">10:00</div><div class="spot-body"><div class="spot-name">노이슈반슈타인 성</div><div class="spot-desc">루트비히 2세가 지은 동화 속 성 · 마리엔 다리에서 전경 사진 필수 · 입장 사전 예약 필수 (onlineshop.hohenschwangau.de) <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">12:30</div><div class="spot-body"><div class="spot-name">알프스 뷰 레스토랑 점심</div><div class="spot-desc">성 근처 Café Neuschwanstein · 알프스 배경으로 식사 · 아버지랑 사진 많이 찍기 <span class="tip-pill tip-dad">아버지 픽</span></div></div></div>
+      <div class="spot"><div class="spot-time">14:30</div><div class="spot-body"><div class="spot-name">호엔슈방가우 성 (선택)</div><div class="spot-desc">길 건너 노란 성 · 루트비히 2세 어린 시절 궁전 · 30분 추가</div></div></div>
+      <div class="spot"><div class="spot-time">17:00</div><div class="spot-body"><div class="spot-name">뮌헨 복귀</div><div class="spot-desc">저녁은 숙소 근처 편하게 · 이날은 체력 많이 씀 — 일찍 쉬기 권장</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="sal" class="section">
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">숙소 추천 지역</div><div class="info-val">구시가 or 마카르트광장 주변</div></div>
+    <div class="info-card"><div class="info-label">MUC→SZG</div><div class="info-val">기차 1h40 / €20~</div></div>
+    <div class="info-card"><div class="info-label">시내 이동</div><div class="info-val">대부분 도보 가능</div></div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#9FE1CB;color:#085041">4</div>
+      <div><div class="day-title">6/8 (일) — 잘츠부르크 이동 + 구시가 오후</div><div class="day-sub">오전 뮌헨 빅투알리엔 시장 → 기차 이동</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">빅투알리엔 시장 아침</div><div class="spot-desc">뮌헨 마지막 아침 · 시장 비어가르텐에서 흰 소시지(Weißwurst)+달콤한 머스터드+브레첼 세트 <span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">11:00</div><div class="spot-body"><div class="spot-name">뮌헨 중앙역 → 잘츠부르크</div><div class="spot-desc">RJ or EC 기차 · 잘자흐강 따라 알프스 풍경 펼쳐짐 · 기차에서 이미 절경 시작</div></div></div>
+      <div class="spot"><div class="spot-time">13:00</div><div class="spot-body"><div class="spot-name">잘츠부르크 도착 · 숙소 체크인</div><div class="spot-desc">짐 맡기고 바로 구시가로</div></div></div>
+      <div class="spot"><div class="spot-time">14:00</div><div class="spot-body"><div class="spot-name">게트라이데가세 골목</div><div class="spot-desc">모차르트 생가(Mozarts Geburtshaus) · 좁은 중세 골목에 금속 간판들 · 아버지 사진 스팟 1순위 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">16:00</div><div class="spot-body"><div class="spot-name">잘자흐강변 산책</div><div class="spot-desc">강 건너 마카르트 다리 자물쇠 보기 · 성 바라보며 커피 한 잔 <span class="tip-pill tip-walk">산책</span></div></div></div>
+      <div class="spot"><div class="spot-time">19:00</div><div class="spot-body"><div class="spot-name">저녁 — 스티글켈러 비어가르텐</div><div class="spot-desc">호엔잘츠부르크 성 아래 야외 비어가르텐 · 성 야경 보며 맥주 · 아버지랑 잊지 못할 저녁 <span class="tip-pill tip-dad">아버지 픽</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#9FE1CB;color:#085041">5</div>
+      <div><div class="day-title">6/9 (월) — 호엔잘츠부르크 성 + 미라벨 정원</div><div class="day-sub">잘츠부르크 핵심 하루</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">호엔잘츠부르크 성 (케이블카)</div><div class="spot-desc">11세기 축성 알프스 요새 · 케이블카 (Festungsbahn) 왕복 €14 · 성에서 시내 전경 + 알프스 파노라마 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">11:00</div><div class="spot-body"><div class="spot-name">잘츠부르크 대성당</div><div class="spot-desc">바로크 양식 대성당 · 모차르트 세례받은 곳 · 무료 입장 · 아버지 역사 취향 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">12:30</div><div class="spot-body"><div class="spot-name">점심 — 카페 자허 잘츠부르크</div><div class="spot-desc">자허토르테 원조 카페 · 초코케이크+아인슈페너(커피) 세트 · 아버지랑 오스트리아 카페 문화 체험 <span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">14:00</div><div class="spot-body"><div class="spot-name">미라벨 궁전 & 정원</div><div class="spot-desc">사운드 오브 뮤직 촬영지 · 알프스 배경 꽃밭 정원 · 입장 무료 · 아버지 사진 스팟 2순위 <span class="tip-pill tip-walk">산책</span></div></div></div>
+      <div class="spot"><div class="spot-time">16:00</div><div class="spot-body"><div class="spot-name">모차르트 광장 & 구시가 자유 산책</div><div class="spot-desc">기념품 쇼핑 · 모차르트 쿠겔(초코볼) 선물용 구입 <span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">19:00</div><div class="spot-body"><div class="spot-name">저녁 — 츠바이겔슈테른 or 힘멜라이히</div><div class="spot-desc">오스트리아식 슈니첼(Wiener Schnitzel) + 오스트리아 화이트와인 한 잔</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="hal" class="section">
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">이동</div><div class="info-val">버스+페리 왕복 약 3h</div></div>
+    <div class="info-card"><div class="info-label">추천 출발</div><div class="info-val">07:30 (안개 절경)</div></div>
+    <div class="info-card"><div class="info-label">숙박 옵션</div><div class="info-val">당일치기 or 1박</div></div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#FAC775;color:#633806">6</div>
+      <div><div class="day-title">6/10 (화) — 할슈타트 당일치기</div><div class="day-sub">알프스 호숫가 마을 · 유네스코 세계문화유산</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">07:30</div><div class="spot-body"><div class="spot-name">잘츠부르크 출발 (버스 150번)</div><div class="spot-desc">할슈타트 선착장까지 약 1h20 · 아침 이슬 & 안개 낀 알프스 호수가 하이라이트 — 늦게 가면 손해 <span class="tip-pill tip-dad">아버지 픽</span></div></div></div>
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">페리로 마을 진입</div><div class="spot-desc">선착장에서 페리 5분 · 호수 위에서 바라보는 마을+알프스 첫 뷰 · 아버지 감동 포인트</div></div></div>
+      <div class="spot"><div class="spot-time">09:30</div><div class="spot-body"><div class="spot-name">마을 산책 & 뷰포인트</div><div class="spot-desc">카톨릭 성당 · 세계에서 가장 오래된 소금 광산 (선택, €35) · 마을 골목 구석구석 <span class="tip-pill tip-walk">산책</span></div></div></div>
+      <div class="spot"><div class="spot-time">11:00</div><div class="spot-body"><div class="spot-name">할슈타트 스카이워크 전망대</div><div class="spot-desc">케이블카+도보 20분 · 마을+호수 내려다보는 절경 · 아버지랑 사진 이날 최고 컷 <span class="tip-pill tip-dad">아버지 픽</span></div></div></div>
+      <div class="spot"><div class="spot-time">13:00</div><div class="spot-body"><div class="spot-name">점심 — 호숫가 레스토랑</div><div class="spot-desc">Gasthof Simony or Seehotel Grüner Baum · 호수 뷰 테라스 · 송어 요리(Forelle) 필수 <span class="tip-pill tip-food">음식</span></div></div></div>
+      <div class="spot"><div class="spot-time">15:00</div><div class="spot-body"><div class="spot-name">잘츠부르크 복귀</div><div class="spot-desc">페리+버스 역순 · 저녁은 잘츠부르크에서 가볍게</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="fra" class="section">
+  <div class="info-grid">
+    <div class="info-card"><div class="info-label">SZG→FRA</div><div class="info-val">기차 약 3h30~4h</div></div>
+    <div class="info-card"><div class="info-label">숙소</div><div class="info-val">공항 or 뢰머광장 근처</div></div>
+    <div class="info-card"><div class="info-label">귀국 항공</div><div class="info-val">FRA 18:50 출발</div></div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#F5C4B3;color:#712B13">7</div>
+      <div><div class="day-title">6/11 (수) — 잘츠부르크 → 프랑크푸르트</div><div class="day-sub">이동 + 구시가 저녁 산책</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">잘츠부르크 체크아웃 · 기차 출발</div><div class="spot-desc">SZG→MUC(1h40)→FRA(2h) 환승 · 총 약 4h · DB 앱 예매 시 €40~ 가능</div></div></div>
+      <div class="spot"><div class="spot-time">14:00</div><div class="spot-body"><div class="spot-name">프랑크푸르트 도착 · 숙소 체크인</div><div class="spot-desc">공항 근처 숙소 권장 (마지막 날 편의) · 혹은 구시가 근처도 OK</div></div></div>
+      <div class="spot"><div class="spot-time">15:30</div><div class="spot-body"><div class="spot-name">뢰머광장 (Römerberg)</div><div class="spot-desc">중세 목골 건물들 · 프랑크푸르트 상징 광장 · 아버지 마지막 유럽 사진 스팟 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">17:00</div><div class="spot-body"><div class="spot-name">마인강변 산책</div><div class="spot-desc">무제움스우퍼(Museum Embankment) 강변 · 맞은편 고층빌딩과 구시가 대비 구경 <span class="tip-pill tip-walk">산책</span></div></div></div>
+      <div class="spot"><div class="spot-time">19:00</div><div class="spot-body"><div class="spot-name">저녁 — 자흐센하우젠 사과주 골목</div><div class="spot-desc">Apfelwein(사과 발효주) 프랑크푸르트 명물 · Wagner 또는 Dauth-Schneider · 녹색 리브첸(리브체)와 함께 <span class="tip-pill tip-food">음식</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="day-block">
+    <div class="day-head">
+      <div class="day-badge" style="background:#F5C4B3;color:#712B13">8</div>
+      <div><div class="day-title">6/12 (금) — 프랑크푸르트 자유 → 귀국</div><div class="day-sub">FRA 18:50 탑승 · 3시간 전 공항 도착</div></div>
+    </div>
+    <div class="spots">
+      <div class="spot"><div class="spot-time">09:00</div><div class="spot-body"><div class="spot-name">자유 시간</div><div class="spot-desc">슈테델 미술관 (인상파 컬렉션) · 카이저돔 대성당 · 또는 쇼핑 — 마지막 유럽 기념품 <span class="tip-pill tip-dad">역사</span></div></div></div>
+      <div class="spot"><div class="spot-time">13:00</div><div class="spot-body"><div class="spot-name">점심 후 공항 이동</div><div class="spot-desc">공항 S반(S8/S9) 15분 · 티웨이 카운터 3시간 전 도착 권장 (외항사 체크인 느림)</div></div></div>
+      <div class="spot"><div class="spot-time">18:50</div><div class="spot-body"><div class="spot-name">FRA 출발 → ICN 6/13 14:00 도착</div><div class="spot-desc">12h10 직항 · 기내에서 9일치 여행 사진 정리하기</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="tip" class="section">
+  <div class="tip-block tip-amber">
+    <div class="tip-head">항공·기차 예매 순서</div>
+    DB(도이치반) 앱 설치 → 뮌헨+잘츠부르크+프랑크푸르트 구간 먼저 예매. 바이에른 티켓(€31+€8/추가 1인)으로 노이슈반슈타인 포함 근교 이동 해결. ICE 사전 예매 시 €20~29대 가능 (당일 2~3배).
+  </div>
+  <div class="tip-block tip-purple">
+    <div class="tip-head">노이슈반슈타인 예약 필수</div>
+    onlineshop.hohenschwangau.de 에서 반드시 사전 예약. 현장 판매 거의 없고 줄 길이 어마어마. 아침 10시 타임슬롯 노리기.
+  </div>
+  <div class="tip-block tip-teal">
+    <div class="tip-head">아버지 체력 관리 팁</div>
+    하루 이동 스팟 3개 이하 유지. 점심 후 30분 카페 휴식 루틴 넣기. 뮌헨 이동은 U반+트램 위주(지하철 많이 걷지 않음). 할슈타트 당일 스카이워크는 체력 보고 선택.
+  </div>
+  <div class="tip-block tip-coral">
+    <div class="tip-head">현지 결제 & 환전</div>
+    독일·오스트리아 모두 카드 결제 잘 됨. 소규모 식당만 현금 필요. 환전은 소액만. 트래블월렛 or 카카오뱅크 체크카드 챙기면 수수료 절약.
+  </div>
+  <div class="tip-block tip-green">
+    <div class="tip-head">통신·데이터</div>
+    독일+오스트리아 모두 EU권 — 유럽 유심 1개로 커버. 공항 도착 후 바로 유심 교체. 알로짐·유심사 등 국내 선구매 권장 (공항 로밍보다 60% 저렴).
+  </div>
+  <div class="tip-block tip-gray">
+    <div class="tip-head">숙소 지금 바로 예약해야 할 곳</div>
+    할슈타트 1박 원하면 즉시 예약 (성수기 마을 전체 방 30개 수준). 뮌헨 6월 중순은 각종 축제로 붐빔 — 마리엔광장 1km 내 숙소 빨리 잡기.
+  </div>
+</div>
+</div>
+
+<script>
+function show(id, el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('show');
+  el.classList.add('active');
+}
+</script>
